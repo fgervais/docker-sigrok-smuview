@@ -1,0 +1,18 @@
+version: "3"
+services:
+  docker-sigrok-smuview:
+    build: .
+    image: docker-sigrok-smuview
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - HOME=/tmp
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ${PWD}:/host
+    devices:
+      - /dev/bus/usb
+    tmpfs:
+      - /tmp
+    user: ${UID:-1000}:${GID:-1000}
+    network_mode: none

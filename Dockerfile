@@ -28,8 +28,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
 	libftdi1-dev \
 	check \
 	doxygen \
-	swig \
-	default-jdk
+	nettle-dev
 RUN git clone git://sigrok.org/libsigrok && \
 	cd libsigrok && \
 	./autogen.sh && \
@@ -43,7 +42,8 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
 	python3-dev \
 	libqt5svg5-dev \
 	qtbase5-dev \
-	libqwt-qt5-dev
+	libqwt-qt5-dev \
+	ca-certificates
 RUN git clone https://github.com/knarfS/smuview && \
 	cd smuview && \
 	mkdir build && \

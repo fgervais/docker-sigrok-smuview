@@ -1,6 +1,7 @@
 FROM ubuntu:18.04 AS base
 
-ARG INSTALL_DIR=/_install
+ARG WORKDIR=
+ARG INSTALL_DIR=${WORKDIR}/_install
 
 FROM base AS build
 RUN apt-get update && apt-get -y install --no-install-recommends \
@@ -10,7 +11,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
 	autoconf \
 	automake \
 	libtool
-RUN git clone git://sigrok.org/libserialport && \
+RUN if [ ! -d libserialport ] then; git clone git://sigrok.org/libserialport; fi && \
 	cd libserialport && \
 	./autogen.sh && \
 	./configure --prefix=${INSTALL_DIR} && \
@@ -29,7 +30,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
 	check \
 	doxygen \
 	nettle-dev
-RUN git clone git://sigrok.org/libsigrok && \
+RUN if [ ! -d libsigrok ] then; git clone git://sigrok.org/libsigrok; fi && \
 	cd libsigrok && \
 	./autogen.sh && \
 	PKG_CONFIG_PATH=${INSTALL_DIR}/lib/pkgconfig ./configure --prefix=${INSTALL_DIR} && \
@@ -44,7 +45,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
 	qtbase5-dev \
 	libqwt-qt5-dev \
 	ca-certificates
-RUN git clone https://github.com/knarfS/smuview && \
+RUN if [ ! -d smuview ] then; git clone https://github.com/knarfS/smuview; fi && \
 	cd smuview && \
 	mkdir build && \
 	cd build && \
@@ -61,4 +62,6 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
 	libqwt-qt5-6 \
 	python3
 COPY --from=build ${INSTALL_DIR}/ /usr/
+RUN apt-get update && apt-get -y install --no-install-recommends \
+	strace
 CMD ["smuview"]

@@ -1,0 +1,10 @@
+version: "3"
+services:
+  docker-sigrok-smuview:
+    build:
+      target: build
+      args:
+        WORKDIR: /workdir
+    image: docker-sigrok-smuview-dev
+    volumes:
+      - .:/workdir

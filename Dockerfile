@@ -3,7 +3,10 @@ FROM ubuntu:18.04 AS base
 ARG WORKDIR=
 ARG INSTALL_DIR=${WORKDIR}/_install
 
-FROM base AS build
+FROM base AS build_deps
+ARG WORKDIR
+WORKDIR ${WORKDIR}
+# libserialport
 RUN apt-get update && apt-get -y install --no-install-recommends \
 	git-core \
 	gcc \
@@ -11,13 +14,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
 	autoconf \
 	automake \
 	libtool
-RUN if [ ! -d libserialport ] then; git clone git://sigrok.org/libserialport; fi && \
-	cd libserialport && \
-	./autogen.sh && \
-	./configure --prefix=${INSTALL_DIR} && \
-	make && \
-	make install
-
+# libsigrok
 RUN apt-get update && apt-get -y install --no-install-recommends \
 	g++ \
 	autoconf-archive \
@@ -30,13 +27,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
 	check \
 	doxygen \
 	nettle-dev
-RUN if [ ! -d libsigrok ] then; git clone git://sigrok.org/libsigrok; fi && \
-	cd libsigrok && \
-	./autogen.sh && \
-	PKG_CONFIG_PATH=${INSTALL_DIR}/lib/pkgconfig ./configure --prefix=${INSTALL_DIR} && \
-	make -j16 && \
-	make install
-
+# smuview
 RUN apt-get update && apt-get -y install --no-install-recommends \
 	cmake \
 	libboost-dev \
@@ -45,15 +36,14 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
 	qtbase5-dev \
 	libqwt-qt5-dev \
 	ca-certificates
-RUN if [ ! -d smuview ] then; git clone https://github.com/knarfS/smuview; fi && \
-	cd smuview && \
-	mkdir build && \
-	cd build && \
-	PKG_CONFIG_PATH=${INSTALL_DIR}/lib/pkgconfig cmake -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DIR} ../ && \
-	make -j16 && \
-	make install
+
+FROM build_deps AS build
+ARG INSTALL_DIR
+COPY build.sh .
+RUN ./build.sh ${INSTALL_DIR}
 
 FROM base
+ARG INSTALL_DIR
 RUN apt-get update && apt-get -y install --no-install-recommends \
 	libftdi1-2 \
 	libglibmm-2.4-1v5 \

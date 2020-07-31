@@ -1,7 +1,7 @@
-FROM ubuntu:18.04 AS base
-
-ARG WORKDIR=
+ARG WORKDIR=/.
 ARG INSTALL_DIR=${WORKDIR}/_install
+
+FROM ubuntu:18.04 AS base
 
 FROM base AS build_deps
 ARG WORKDIR

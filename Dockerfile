@@ -54,4 +54,4 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
 COPY --from=build ${INSTALL_DIR}/ /usr/
 RUN apt-get update && apt-get -y install --no-install-recommends \
 	strace
-CMD ["smuview"]
+CMD ["smuview", "-D"]

@@ -1,4 +1,4 @@
-version: "3"
+version: "3.4"
 services:
   docker-sigrok-smuview:
     build: .
@@ -10,9 +10,21 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ${PWD}:/host
-    devices:
-      - /dev/bus/usb
-    tmpfs:
-      - /tmp
+      # See newly connected devices
+      - /dev:/dev
+      # Get udev events
+      - /run/udev/control:/run/udev/control
+      - /etc/localtime:/etc/localtime
+    # Allow PF_NETLINK
+    # https://stackoverflow.com/questions/49687378/how-to-get-hosts-udev-events-from-a-docker-container
+    network_mode: host
+    # Get rw access to newly connected devices
+    # "devices: - /dev/bus/usb" would only allow access to devices present when
+    # the container was started.
+    privileged: true
+    #devices:
+    #  - /dev/bus/usb
+    # tmpfs:
+    #   - /tmp:exec
     user: ${UID:-1000}:${GID:-1000}
-    network_mode: none
+    #network_mode: none

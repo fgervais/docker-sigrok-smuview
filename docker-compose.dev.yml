@@ -1,0 +1,16 @@
+version: "3.4"
+services:
+  docker-sigrok-smuview:
+    build:
+      target: build_deps
+      args:
+        WORKDIR: /workdir
+    image: docker-sigrok-smuview-dev
+    volumes:
+      - .:/workdir
+      # Make the bash prompt beautiful
+      - /etc/group:/etc/group:ro
+      - /etc/passwd:/etc/passwd:ro
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    command: ["bash"]

@@ -30,6 +30,34 @@ make -j16
 make install
 cd -
 
+if [ ! -d libsigrokdecode ]
+then
+	git clone git://sigrok.org/libsigrokdecode
+fi
+cd libsigrokdecode
+if [ ! -f configure ]
+then
+	./autogen.sh
+	PKG_CONFIG_PATH=${INSTALL_DIR}/lib/pkgconfig ./configure --prefix=${INSTALL_DIR}
+fi
+make -j16
+make install
+cd -
+
+if [ ! -d sigrok-cli ]
+then
+	git clone git://sigrok.org/sigrok-cli
+fi
+cd sigrok-cli
+if [ ! -f configure ]
+then
+	./autogen.sh
+	PKG_CONFIG_PATH=${INSTALL_DIR}/lib/pkgconfig ./configure --prefix=${INSTALL_DIR}
+fi
+make -j16
+make install
+cd -
+
 if [ ! -d smuview ]
 then
 	git clone https://github.com/knarfS/smuview

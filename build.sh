@@ -18,7 +18,8 @@ cd -
 
 if [ ! -d libsigrok ]
 then
-	git clone git://sigrok.org/libsigrok
+	git clone https://github.com/tjko/libsigrok.git
+	git checkout itech-it8500-v3
 fi
 cd libsigrok
 if [ ! -f configure ]
